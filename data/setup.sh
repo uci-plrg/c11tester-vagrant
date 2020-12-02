@@ -9,17 +9,17 @@ cd ..
 
 git clone /vagrant/PMCPass.git
 cd PMCPass
-git checkout 0b639997a1a990cfaa0adb29a4f3a1c9f784d8ca
+git checkout vagrant
 cd ..
 
 git clone /vagrant/pmcheck.git
 cd pmcheck/
-git checkout b4a60d7110e7d5f8849c771b84ee09c81e216186
+git checkout vagrant
 cd ..
 
 git clone /vagrant/nvm-benchmarks.git
 cd nvm-benchmarks
-git checkout 4fb82ecb29cdec628630f9433c58813f44aabf90
+git checkout vagrant
 cd ..
 
 
@@ -30,7 +30,7 @@ cd llvm-project
 mkdir build
 cd build
 cmake -DLLVM_ENABLE_PROJECTS=clang -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles" ../llvm
-make
+make -j 4
 cd ~/
 touch llvm-project/build/lib/libPMCPass.so
 
