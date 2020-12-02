@@ -1,33 +1,44 @@
 #!/bin/bash
 set -e
 
+# 1. Getting all the source code
 git clone https://github.com/llvm/llvm-project.git
-
-git clone /vagrant/PMCPass.git
 cd llvm-project
 git checkout 7899fe9da8d8df6f19ddcbbb877ea124d711c54b
-cd ../PMCPass
+cd ..
+
+git clone /vagrant/PMCPass.git
+cd PMCPass
 git checkout 0b639997a1a990cfaa0adb29a4f3a1c9f784d8ca
-cd ~/
+cd ..
+
+git clone /vagrant/pmcheck.git
+cd pmcheck/
+git checkout b4a60d7110e7d5f8849c771b84ee09c81e216186
+cd ..
+
+git clone /vagrant/nvm-benchmarks.git
+cd nvm-benchmarks
+git checkout 4fb82ecb29cdec628630f9433c58813f44aabf90
+cd ..
+
+
+# 2. Compiling the projects
 mv PMCPass llvm-project/llvm/lib/Transforms/
 echo "add_subdirectory(PMCPass)" >> llvm-project/llvm/lib/Transforms/CMakeLists.txt
 cd llvm-project
 mkdir build
 cd build
-cmake -DLLVM_ENABLE_PROJECTS=clang -DCMAKE_BUILD_TYPE=Release -G "Unix Makefile" ../llvm
+cmake -DLLVM_ENABLE_PROJECTS=clang -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles" ../llvm
 make
 cd ~/
 touch llvm-project/build/lib/libPMCPass.so
 
-git clone /vagrant/pmcheck.git
 cd pmcheck/
-git checkout b4a60d7110e7d5f8849c771b84ee09c81e216186
 sed -i 's/LLVMDIR=.*/LLVMDIR=~\/llvm-project\//g' Test/gcc
-#sed -i 's/CC=.*/CC=clang/g' Test/gcc
 sed -i 's/JAARUDIR=.*/JAARUDIR=~\/pmcheck\/bin\//g' Test/gcc
 
 sed -i 's/LLVMDIR=.*/LLVMDIR=~\/llvm-project\//g' Test/g++
-#sed -i 's/CC=.*/CC=clang++/g' Test/g++
 sed -i 's/JAARUDIR=.*/JAARUDIR=~\/pmcheck\/bin\//g' Test/g++
 #make
 #make test
@@ -41,21 +52,24 @@ sed -i 's/.*\#define ENABLE_VMEM.*/\#define ENABLE_VMEM/g' config.h
 make clean
 make
 make test
+cd ~/
 
-git clone /vagrant/nvm-benchmarks.git
 cd nvm-benchmarks
-git checkout 4fb82ecb29cdec628630f9433c58813f44aabf90
 sed -i 's/export LD_LIBRARY_PATH=.*/export LD_LIBRARY_PATH=~\/pmcheck\/bin\//g' run
 cd RECIPE
 #Initializing CCEH
 cd CCEH
 sed -i 's/CXX := \/.*/CXX := ~\/pmcheck-vmem\/Test\/g++/g' Makefile
 make
+cd ..
+
 #Initializing FAST_FAIR
-cd ../FAST_FAIR
+cd FAST_FAIR
 sed -i 's/CXX=.*/CXX=~\/pmcheck-vmem\/Test\/g++/g' Makefile
 make
+cd ..
 
+#initializing P-ART, P-BwTree, P-CLHT, P-Masstree, and P-HOT
 RECIPE_BENCH="P-ART P-BwTree P-CLHT P-Masstree P-HOT"
 for bench in $RECIPE_BENCH; do
 	cd bench
