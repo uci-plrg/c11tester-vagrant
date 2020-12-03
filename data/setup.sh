@@ -72,7 +72,7 @@ cd ..
 #initializing P-ART, P-BwTree, P-CLHT, P-Masstree, and P-HOT
 RECIPE_BENCH="P-ART P-BwTree P-CLHT P-Masstree P-HOT"
 for bench in $RECIPE_BENCH; do
-	cd bench
+	cd $bench
 	sed -i 's/set(CMAKE_C_COMPILER .*)/set(CMAKE_C_COMPILER "\/home\/vagrant\/pmcheck-vmem\/Test\/gcc")/g' CMakeLists.txt
 	sed -i 's/set(CMAKE_CXX_COMPILER .*)/set(CMAKE_CXX_COMPILER "\/home\/vagrant\/pmcheck-vmem\/Test\/g++")/g' CMakeLists.txt
 	sed -i 's/export LD_LIBRARY_PATH=.*/export LD_LIBRARY_PATH=~\/pmcheck-vmem\/bin\//g' run.sh
