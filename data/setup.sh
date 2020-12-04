@@ -55,8 +55,9 @@ make test
 cd ~/
 
 cd nvm-benchmarks
-sed -i 's/export LD_LIBRARY_PATH=.*/export LD_LIBRARY_PATH=~\/pmcheck\/bin\//g' run
+sed -i 's/export LD_LIBRARY_PATH=.*/export LD_LIBRARY_PATH=~\/pmcheck-vmem\/bin\//g' run
 cd RECIPE
+
 #Initializing CCEH
 cd CCEH
 sed -i 's/CXX := \/.*/CXX := ~\/pmcheck-vmem\/Test\/g++/g' Makefile
@@ -70,19 +71,23 @@ make
 cd ..
 
 #initializing P-ART, P-BwTree, P-CLHT, P-Masstree, and P-HOT
-RECIPE_BENCH="P-ART P-BwTree P-CLHT P-Masstree P-HOT"
+RECIPE_BENCH="P-ART P-BwTree P-CLHT P-Masstree"
 for bench in $RECIPE_BENCH; do
-	cd $bench
-	sed -i 's/set(CMAKE_C_COMPILER .*)/set(CMAKE_C_COMPILER "\/home\/vagrant\/pmcheck-vmem\/Test\/gcc")/g' CMakeLists.txt
-	sed -i 's/set(CMAKE_CXX_COMPILER .*)/set(CMAKE_CXX_COMPILER "\/home\/vagrant\/pmcheck-vmem\/Test\/g++")/g' CMakeLists.txt
-	sed -i 's/export LD_LIBRARY_PATH=.*/export LD_LIBRARY_PATH=~\/pmcheck-vmem\/bin\//g' run.sh
-	sed -i 's/export DYLD_LIBRARY_PATH=.*/export DYLD_LIBRARY_PATH=~\/pmcheck-vmem\/bin\//g' run.sh
-	mkdir build
-	cd build
-	cmake -DCMAKE_C_COMPILER=/home/vagrant/pmcheck-vmem/Test/gcc -DCMAKE_CXX_COMPILER=/home/vagrant/pmcheck-vmem/Test/g++ -DCMAKE_CXX_FLAGS=-fheinous-gnu-extensions ..
-	make -j
-	cd ../../
+        cd $bench
+        sed -i 's/set(CMAKE_C_COMPILER .*)/set(CMAKE_C_COMPILER "\/home\/vagrant\/pmcheck-vmem\/Test\/gcc")/g' CMakeLists.txt
+        sed -i 's/set(CMAKE_CXX_COMPILER .*)/set(CMAKE_CXX_COMPILER "\/home\/vagrant\/pmcheck-vmem\/Test\/g++")/g' CMakeLists.txt
+        sed -i 's/export LD_LIBRARY_PATH=.*/export LD_LIBRARY_PATH=~\/pmcheck-vmem\/bin\//g' run.sh
+        sed -i 's/export DYLD_LIBRARY_PATH=.*/export DYLD_LIBRARY_PATH=~\/pmcheck-vmem\/bin\//g' run.sh
+        rm -rf build
+        mkdir build
+        cd build
+        cmake -DCMAKE_C_COMPILER=/home/vagrant/pmcheck-vmem/Test/gcc -DCMAKE_CXX_COMPILER=/home/vagrant/pmcheck-vmem/Test/g++ -DCMAKE_C_FLAGS=-fheinous-gnu-extensions ..
+        make -j
+        touch run.sh
+        cd ../../
 done
-cd ~/
+
+
+bash runall
 
 echo >&2 "Setup is now complete. To run the benchmarks, please look at our READE.md"
