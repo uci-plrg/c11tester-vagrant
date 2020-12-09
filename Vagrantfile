@@ -15,6 +15,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/bionic64"
   config.vm.provision :shell, path: "bootstrap.sh"
   config.disksize.size = '80GB'
+  #config.vagrant.plugins = "vagrant-disksize"
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
@@ -70,7 +71,7 @@ Vagrant.configure("2") do |config|
   # SHELL
   #v.customize ["modifyvm", :id, "--memory", 4096]
   config.vm.provider :virtualbox do |v|
-     v.customize ["modifyvm", :id, "--memory", 28344]
+     v.customize ["modifyvm", :id, "--memory", 32000]
      v.customize ["modifyvm", :id, "--cpus", "4"]
 
   end

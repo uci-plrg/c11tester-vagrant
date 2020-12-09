@@ -1,93 +1,77 @@
 #!/bin/bash
 set -e
 
-# 1. Getting all the source code
-git clone https://github.com/llvm/llvm-project.git
-cd llvm-project
-git checkout 7899fe9da8d8df6f19ddcbbb877ea124d711c54b
-cd ..
+# 1. Getting and compiling llvm for c11tester
+wget https://releases.llvm.org/8.0.0/llvm-8.0.0.src.tar.xz
+tar -xf llvm-8.0.0.src.tar.xz
+mv llvm-8.0.0.src llvm
+rm llvm-8.0.0.src.tar.xz
 
-git clone /vagrant/PMCPass.git
-cd PMCPass
+wget https://releases.llvm.org/8.0.0/cfe-8.0.0.src.tar.xz
+tar -xf cfe-8.0.0.src.tar.xz
+mv cfe-8.0.0.src clang
+rm cfe-8.0.0.src.tar.xz
+
+git clone git://plrg.eecs.uci.edu/c11llvm.git CDSPass
+cd CDSPass
 git checkout vagrant
-cd ..
 
-git clone /vagrant/pmcheck.git
-cd pmcheck/
-git checkout vagrant
-cd ..
-
-git clone /vagrant/nvm-benchmarks.git
-cd nvm-benchmarks
-git checkout vagrant
-cd ..
-
-
-# 2. Compiling the projects
-mv PMCPass llvm-project/llvm/lib/Transforms/
-echo "add_subdirectory(PMCPass)" >> llvm-project/llvm/lib/Transforms/CMakeLists.txt
-cd llvm-project
+cd ~
+mv CDSPass c11tester_llvm/lib/Transforms/
+mv clang c11tester_llvm/tools
+echo "add_subdirectory(CDSPass)" >> c11tester_llvm/lib/Transforms/CMakeLists.txt
+echo "add_dependencies(CDSPass intrinsics_gen)" >> c11tester_llvm/lib/Transforms/CMakeLists.txt
+cd c11tester_llvm
 mkdir build
 cd build
-cmake -DLLVM_ENABLE_PROJECTS=clang -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles" ../llvm
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles" ..
 make -j 4
-cd ~/
-touch llvm-project/build/lib/libPMCPass.so
 
-cd pmcheck/
-sed -i 's/LLVMDIR=.*/LLVMDIR=~\/llvm-project\//g' Test/gcc
-sed -i 's/JAARUDIR=.*/JAARUDIR=~\/pmcheck\/bin\//g' Test/gcc
+# 
+git clone git://plrg.eecs.uci.edu/c11tester.git
+cd c11tester
+cd ..
 
-sed -i 's/LLVMDIR=.*/LLVMDIR=~\/llvm-project\//g' Test/g++
-sed -i 's/JAARUDIR=.*/JAARUDIR=~\/pmcheck\/bin\//g' Test/g++
-#make
-#make test
-cd ~/
+git clone git://plrg.eecs.uci.edu/c11concurrency-benchmarks.git
+cd c11concurrency-benchmarks
+git checkout vagrant
+cd ..
 
-cp -r pmcheck pmcheck-vmem
-cd pmcheck-vmem
-sed -i 's/JAARUDIR=.*/JAARUDIR=~\/pmcheck-vmem\/bin\//g' Test/gcc
-sed -i 's/JAARUDIR=.*/JAARUDIR=~\/pmcheck-vmem\/bin\//g' Test/g++
-sed -i 's/.*\#define ENABLE_VMEM.*/\#define ENABLE_VMEM/g' config.h
+cd ~/c11tester
+make clean
+make
+
+# Benchmarks
+## Firefox
+cd ~/c11concurrency-benchmarks
+wget https://ftp.mozilla.org/pub/firefox/releases/50.0.1/source/firefox-50.0.1.source.tar.xz
+tar -xf firefox-50.0.1.source.tar.xz
+mv firefox-50.0.1 firefox
+rm firefox-50.0.1.source.tar.xz
+cp firefox-related/jsshell-c11tester.sh firefox/js/src
+cp firefox-related/icu.m4 build/autoconf
+cd firefox/js/src
+sh jsshell-c11tester.sh c11tester
+
+# Other benchmarks
+cd ~/c11concurrency-benchmarks/mabain
+make clean
+make install
+cd examples
+make
+mkdir multi_test
+
+cd ~/c11concurrency-benchmarks/gdax-orderbook-hpp/demo
+make clean
+make
+
+cd ~/c11concurrency-benchmarks/iris
 make clean
 make
 make test
-cd ~/
 
-cd nvm-benchmarks
-sed -i 's/export LD_LIBRARY_PATH=.*/export LD_LIBRARY_PATH=~\/pmcheck-vmem\/bin\//g' run
-cd RECIPE
-
-#Initializing CCEH
-cd CCEH
-sed -i 's/CXX := \/.*/CXX := ~\/pmcheck-vmem\/Test\/g++/g' Makefile
-make
-cd ..
-
-#Initializing FAST_FAIR
-cd FAST_FAIR
-sed -i 's/CXX=.*/CXX=~\/pmcheck-vmem\/Test\/g++/g' Makefile
-make
-cd ..
-
-#initializing P-ART, P-BwTree, P-CLHT, P-Masstree, and P-HOT
-RECIPE_BENCH="P-ART P-BwTree P-CLHT P-Masstree"
-for bench in $RECIPE_BENCH; do
-        cd $bench
-        sed -i 's/set(CMAKE_C_COMPILER .*)/set(CMAKE_C_COMPILER "\/home\/vagrant\/pmcheck-vmem\/Test\/gcc")/g' CMakeLists.txt
-        sed -i 's/set(CMAKE_CXX_COMPILER .*)/set(CMAKE_CXX_COMPILER "\/home\/vagrant\/pmcheck-vmem\/Test\/g++")/g' CMakeLists.txt
-        sed -i 's/export LD_LIBRARY_PATH=.*/export LD_LIBRARY_PATH=~\/pmcheck-vmem\/bin\//g' run.sh
-        sed -i 's/export DYLD_LIBRARY_PATH=.*/export DYLD_LIBRARY_PATH=~\/pmcheck-vmem\/bin\//g' run.sh
-        rm -rf build
-        mkdir build
-        cd build
-        cmake -DCMAKE_C_COMPILER=/home/vagrant/pmcheck-vmem/Test/gcc -DCMAKE_CXX_COMPILER=/home/vagrant/pmcheck-vmem/Test/g++ -DCMAKE_C_FLAGS=-fheinous-gnu-extensions ..
-        make -j
-        touch run.sh
-        cd ../../
-done
-
-
-bash runall
+cd ~/c11concurrency-benchmarks/silo
+make clean;
+MODE=perf CHECK_INVARIANTS=0 USE_MALLOC_MODE=0 make -j dbtest
 
 echo >&2 "Setup is now complete. To run the benchmarks, please look at our READE.md"
