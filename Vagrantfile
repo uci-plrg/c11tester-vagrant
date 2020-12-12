@@ -71,8 +71,7 @@ Vagrant.configure("2") do |config|
   # SHELL
   #v.customize ["modifyvm", :id, "--memory", 4096]
   config.vm.provider :virtualbox do |v|
-     v.customize ["modifyvm", :id, "--memory", 32000]
-     v.customize ["modifyvm", :id, "--cpus", "4"]
-
+     v.customize ["modifyvm", :id, "--memory", 40000]
+     v.customize ["modifyvm", :id, "--cpus", "6"]
   end
 end
