@@ -7,10 +7,10 @@ def GdaxStatistics(filename):
     gdax_data = []
     with open(filename, 'r') as f:
         content = f.read()
-        allruns = re.findall(r'(0-0\.49.*?)(---)', content, flags=re.DOTALL)
+        allruns = re.findall(r'(0-0\.49.*?19.99 s: \d+)', content, flags=re.DOTALL)
         for run in allruns:
             iterations = 0
-            for entry in run[0].split('\n'):
+            for entry in run.split('\n'):
                 if entry:
                     (_, count) = entry.split(': ')
                     iterations += int(count)
