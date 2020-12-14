@@ -5,4 +5,4 @@ apt-get -y install libnuma-dev libdb++-dev libz-dev libboost-dev libboost-system
 apt-get -y install python python-pip
 pip install statistics
 
-su -c /vagrant/data/setup.sh vagrant
+su -c /vagrant/data/scripts/setup.sh vagrant

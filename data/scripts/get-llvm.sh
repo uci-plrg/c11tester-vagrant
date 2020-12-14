@@ -22,10 +22,10 @@ git checkout vagrant
 cd ~
 mv CDSPass ~/llvm/lib/Transforms/
 mv clang ~/llvm/tools
-echo "add_subdirectory(CDSPass)" >> c11tester_llvm/lib/Transforms/CMakeLists.txt
-echo "add_dependencies(CDSPass intrinsics_gen)" >> c11tester_llvm/lib/Transforms/CMakeLists.txt
+echo "add_subdirectory(CDSPass)" >> llvm/lib/Transforms/CMakeLists.txt
+echo "add_dependencies(CDSPass intrinsics_gen)" >> llvm/lib/Transforms/CMakeLists.txt
 cd llvm
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles" ..
-make -j 4
+make -j 6
