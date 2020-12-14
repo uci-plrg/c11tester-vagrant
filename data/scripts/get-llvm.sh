@@ -15,7 +15,7 @@ tar -xf cfe-8.0.0.src.tar.xz
 mv cfe-8.0.0.src clang
 rm cfe-8.0.0.src.tar.xz
 
-git clone git://plrg.eecs.uci.edu/c11llvm.git CDSPass
+git clone git://plrg.ics.uci.edu/c11llvm.git CDSPass
 cd CDSPass
 git checkout vagrant
 

@@ -6,7 +6,7 @@ cd ~
 sh /vagrant/data/scripts/get-llvm.sh
 
 # 2. Getting and compiling c11tester
-git clone git://plrg.eecs.uci.edu/c11tester.git
+git clone git://plrg.ics.uci.edu/c11tester.git
 cd ~/c11tester
 git checkout vagrant
 make clean
@@ -14,7 +14,7 @@ make
 cd ..
 
 # 3. Benchmarks
-git clone git://plrg.eecs.uci.edu/c11concurrency-benchmarks.git c11tester-benchmarks
+git clone git://plrg.ics.uci.edu/c11concurrency-benchmarks.git c11tester-benchmarks
 cd c11tester-benchmarks
 git checkout vagrant
 cp /vagrant/data/scripts/build.sh .
