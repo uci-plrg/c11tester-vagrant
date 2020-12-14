@@ -23,7 +23,7 @@ def SiloStatistics(filename):
     data = []
     with open(filename, 'r') as f:
         content = f.read()
-        allruns = re.findall(r'agg_throughput: (\d+\.\d+) ops', content)
+        allruns = re.findall(r'agg_throughput: (\d+\.?\d*) ops', content)
         data = [float(x) for x in allruns]
 
     return data
