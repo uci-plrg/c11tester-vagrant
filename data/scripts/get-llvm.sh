@@ -27,5 +27,5 @@ echo "add_dependencies(CDSPass intrinsics_gen)" >> llvm/lib/Transforms/CMakeList
 cd llvm
 mkdir build
 cd build
-cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles" ..
-make -j 6
+cmake -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles" ..
+make -j 4
