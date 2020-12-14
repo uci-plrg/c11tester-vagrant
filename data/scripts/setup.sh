@@ -2,6 +2,9 @@
 set -e
 cd ~
 
+# 1. Getting and compiling llvm
+sh /vagrant/data/scripts/get-llvm.sh
+
 # 1. Getting and compiling c11tester
 git clone git://plrg.eecs.uci.edu/c11tester.git
 cd ~/c11tester

@@ -22,5 +22,15 @@ make test
 
 # Silo
 cd ~/c11tester-benchmarks/silo
-make clean;
+make clean
 MODE=perf CHECK_INVARIANTS=0 USE_MALLOC_MODE=0 make -j dbtest
+
+# Data structure benchmarks
+cd ~/c11tester-benchmarks/cdschecker_modified_benchmarks
+make clean
+make
+
+# Data structures with injected bugs that tsan11 and tsan11rec cannot detect
+cd ~/c11tester-benchmarks/tsan11-missingbug
+make clean
+make
