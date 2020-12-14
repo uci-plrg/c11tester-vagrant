@@ -20,10 +20,13 @@ git checkout vagrant
 cp /vagrant/data/scripts/build.sh .
 cp /vagrant/data/scripts/test_all.sh .
 cp /vagrant/data/scripts/run.sh .
-sh build.sh
+cp /vagrant/data/scripts/calculator.py .
+chmod +x build.sh
+./build.sh
 cd ..
 
 ## Firefox Javascript shell
 cp /vagrant/data/scripts/build_firefox_jsshell.sh .
-sh build_firefox_jsshell.sh
+chmod +x build_firefox_jsshell.sh
+./build_firefox_jsshell.sh
 echo >&2 "Setup is now complete. To run the benchmarks, please look at our READE.md"
