@@ -28,15 +28,27 @@
     c11tester-vagrant $ vagrant ssh
 ```
 
-6. After logging into the VM, to run your own test cases, you need to compile your tool with C11Tester and our LLVM pass (i.e., CDSPass). To make this process easier, we provide four scripting files g++, gcc, clang, and clang++ under the 'c11tester-benchmarks' folder.  In each of these files we define appropriate flags for the compiler.  You can modify '/home/vagrant/llvm/build/bin/clang', '/home/vagrant/llvm/build/lib/libCDSPass.so', and '/home/vagrant/c11tester' in these files to point to the location of clang (clang++), LLVM and C11Tester on your machine.  Then, modify the building system of your tool to use these script wrappers instead of the actual compilers. For example, your '~/c11tester-benchmarks/g++' file can look like this:
+6. Our benchmarks fall into three categories: application benchmarks, data structure benchmarks (cds data structures) used to evaluate CDSChecker, and data structure benchmarks with injected bugs that both tsan11 and tsan11rec miss.
+
+In the benchmark directory (`~/c11tester-benchmarks`), the application benchmarks include Gdax (`gdax-orderbook-hpp`), Iris (`iris`), Mabain (`mabain`), Silo (`silo`), and the Javascript Engine of Firefox that runs Jsbench (`jsbench-2013.1`).  The `c11tester-benchmarks` repository does not contain the Javascript Engine of Firefox, but the setup scripts downloaded Firefox, compiled the Javascript Engine, and copy the Javascript Engine binary into the benchmark directory (`c11tester-benchmarks/js`) by running the script `build_firefox_jsshell.sh`.
+
+The `c11tester-benchmarks/cdschecker_modified_benchmarks` directory contains data structure benchmarks used to evaluate CDSChecker.  The `c11tester-benchmarks/tsan11-missingbug` directory contains data structure benchmarks with bugs that tsan11 and tsan11rec fail to detect. 
+
+7. To run the five application benchmarks:
+
+```
+cd ~/c11tester-benchmarks
+./test_all.sh
+```
+
+The `test_all.sh` script runs all of five application benchmarks in both the all-core and single-core configurations.  The `test_all.sh` script also accepts an integer as an optional parameter that specifies how many times, such as `./test_all.sh 5`, it runs all of five application benchmarks 10 times by default.  After finish running the application benchmarks, the `test_all.sh` script executes `python calculator.py all-core` or `python calculator.py single-core` in the `c11tester-benchmarks` directory to print out results. 
+
+8. To run your own test cases inside of the VM, you need to compile your tool with C11Tester and our LLVM pass (i.e., CDSPass). To make this process easier, we provide four scripting files g++, gcc, clang, and clang++ under the 'c11tester-benchmarks' folder.  In each of these files we define appropriate flags for the compiler.  You can modify '/home/vagrant/llvm/build/bin/clang', '/home/vagrant/llvm/build/lib/libCDSPass.so', and '/home/vagrant/c11tester' in these files to point to the location of clang (clang++), LLVM and C11Tester on your machine.  Then, modify the building system of your tool to use these script wrappers instead of the actual compilers. For example, your '~/c11tester-benchmarks/g++' file can look like this:
 
 ```
 	/home/vagrant/llvm/build/bin/clang++ -Xclang -load -Xclang /home/vagrant/llvm/build/lib/libCDSPass.so -L/home/vagrant/c11tester -lmodel -Wno-unused-command-line-argument $@
 ```
 
-7. Our benchmarks fall into three categories: application benchmarks, data structure benchmarks, and data structure benchmarks with injected bugs that both tsan11 and tsan11rec miss. The application benchmarks include Gdax ('gdax-orderbook-hpp'), Iris, Mabain, Silo, and the Javascript Engine of Firefox that runs Jsbench (jsbench-2013.1).  The 'c11tester-benchmarks' repository does not contain the Javascript Engine of Firefox, but the setup scripts downloaded Firefox, compiled the Javascript Engine, and copy the Javascript Engine binary into the 'c11tester-benchmarks' (c11tester-benchmarks/js) by running the script named 'build\_firefox\_jsshell.sh'.  The 'c11tester-benchmarks/cdschecker\_modified\_benchmarks' directory contains data structure benchmarks, and the 'c11tester-benchmarks/tsan11-missingbug' directory contains data structure benchmarks with bugs that tsan11 and tsan11rec fail to detect. 
-
-8. The 'test\_all.sh' script in 'c11tester-benchmarks' runs all five application benchmarks in both the all-core and single-core configurations.  The 'test\_all.sh' scripts in 'c11tester-benchmarks/cdschecker\_modified\_benchmarks' and 'c11tester-benchmarks/tsan11-missingbug' run their data structure benchmarks respectively. 
 
 ## Disclaimer
 
