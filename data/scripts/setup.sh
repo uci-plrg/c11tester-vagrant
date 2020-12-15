@@ -13,11 +13,22 @@ make clean
 make
 cd ..
 
+## This version of c11tester compiles volatiles into relaxed atomics
+git clone git://plrg.ics.uci.edu/c11tester.git c11tester-relaxed
+cd ~/c11tester-relaxed
+git checkout vagrant
+sed -i 's/memory_order_acquire/memory_order_relaxed/g' config.h
+sed -i 's/memory_order_release/memory_order_relaxed/g' config.h
+make clean
+make
+cd ..
+
 # 3. Benchmarks
 git clone git://plrg.ics.uci.edu/c11concurrency-benchmarks.git c11tester-benchmarks
 cd c11tester-benchmarks
 git checkout vagrant
 cp /vagrant/data/scripts/build.sh .
+cp /vagrant/data/scripts/assertion_test.sh .
 cp /vagrant/data/scripts/test_all.sh .
 cp /vagrant/data/scripts/run.sh .
 cp /vagrant/data/scripts/calculator.py .

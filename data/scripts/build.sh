@@ -24,6 +24,7 @@ make test
 cd ~/c11tester-benchmarks/silo
 make clean
 MODE=perf CHECK_INVARIANTS=0 USE_MALLOC_MODE=0 make -j dbtest
+MODE=perf DEBUG=1 CHECK_INVARIANTS=1 USE_MALLOC_MODE=0 make -j dbtest
 
 # Data structure benchmarks
 cd ~/c11tester-benchmarks/cdschecker_modified_benchmarks

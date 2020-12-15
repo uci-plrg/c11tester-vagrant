@@ -3,10 +3,19 @@ import re
 import statistics
 import sys
 
+def checkRace(content):
+    has_race = re.search(r'race', content)
+    if has_race:
+        print 'data race detected'
+    else:
+        print 'data race not detected'
+
 def GdaxStatistics(filename):
     gdax_data = []
     with open(filename, 'r') as f:
         content = f.read()
+        checkRace(content)
+
         allruns = re.findall(r'(0-0\.49.*?19.99 s: \d+)', content, flags=re.DOTALL)
         for run in allruns:
             iterations = 0
@@ -23,6 +32,7 @@ def SiloStatistics(filename):
     data = []
     with open(filename, 'r') as f:
         content = f.read()
+        checkRace(content)
         allruns = re.findall(r'agg_throughput: (\d+\.?\d*) ops', content)
         data = [float(x) for x in allruns]
 
@@ -32,6 +42,7 @@ def TimeStatistics(filename):
     data = []
     with open(filename, 'r') as f:
         content = f.read()
+        checkRace(content)
         allruns = re.findall(r'real.*?(\d+)m(\d+\.\d+)s', content)
         for run in allruns:
             (minute,second) = run
@@ -43,6 +54,7 @@ def TimeStatistics(filename):
 def JsbenchStatistics(filename):
      with open(filename, 'r') as f:
         content = f.read()
+        checkRace(content)
         result = re.search(r'(Final results.*?runs)', content, flags=re.DOTALL)
         print(result.group(0))
 

@@ -52,7 +52,7 @@ The `c11tester-benchmarks/test_all.sh` script runs all of five application bench
     ./test_all.sh
 ```
 
-The `cdschecker_modified_benchmarks/test_all.sh` script tests seven data structures for 500 runs and reports data race detection rates and execution time for each data structure. 
+The `cdschecker_modified_benchmarks/test_all.sh` script tests seven data structures for 500 runs and reports data race detection rates and execution time for each data structure.  The results are printed in the console. 
 
 ### To run data structure benchmarks with bugs that tsan11 and tsan11rec miss:
 
@@ -61,13 +61,13 @@ The `cdschecker_modified_benchmarks/test_all.sh` script tests seven data structu
     ./test_all.sh
 ```
 
-The `tsan11-missingbug/test_all.sh` script tests two buggy data structure implementations for 1000 runs and reports assertion detection rates and execution time for each data structure. 
+The `tsan11-missingbug/test_all.sh` script tests two buggy data structure implementations for 1000 runs and reports assertion detection rates and execution time for each data structure.  The results are printed in the console.
 
 ### Compile and run your own test cases inside of the VM
 You need to compile your tool with C11Tester and our LLVM pass (i.e., CDSPass). To make this process easier, we provide four scripting files g++, gcc, clang, and clang++ under the 'c11tester-benchmarks' folder.  In each of these files we define appropriate flags for the compiler.  You can modify '/home/vagrant/llvm/build/bin/clang', '/home/vagrant/llvm/build/lib/libCDSPass.so', and '/home/vagrant/c11tester' in these files to point to the location of clang (clang++), LLVM and C11Tester on your machine.  Then, modify the building system of your tool to use these script wrappers instead of the actual compilers. For example, your '~/c11tester-benchmarks/g++' file can look like this:
 
 ```
-	/home/vagrant/llvm/build/bin/clang++ -Xclang -load -Xclang /home/vagrant/llvm/build/lib/libCDSPass.so -L/home/vagrant/c11tester -lmodel -Wno-unused-command-line-argument $@
+    /home/vagrant/llvm/build/bin/clang++ -Xclang -load -Xclang /home/vagrant/llvm/build/lib/libCDSPass.so -L/home/vagrant/c11tester -lmodel -Wno-unused-command-line-argument $@
 ```
 
 
