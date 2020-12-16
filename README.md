@@ -43,7 +43,7 @@ After the setup, some scripts are copied into the `c11tester-benchmarks` directo
 
 ### To run application benchmarks:
 
-```
+```bash
     cd ~/c11tester-benchmarks
     ./app_test_all.sh [number of runs]
 ```
@@ -52,7 +52,7 @@ The `c11tester-benchmarks/app_test_all.sh` script runs all of five application b
 
 ### To run CDSChecker data structure benchmarks:
 
-```
+```bash
     cd ~/c11tester-benchmarks/cdschecker_modified_benchmarks
     ./test_all.sh
 ```
@@ -61,7 +61,7 @@ The `cdschecker_modified_benchmarks/test_all.sh` script tests seven data structu
 
 ### To run data structure benchmarks with bugs that tsan11 and tsan11rec miss:
 
-```
+```bash
     cd ~/c11tester-benchmarks/tsan11-missingbug
     ./test_all.sh
 ```
@@ -70,7 +70,7 @@ The `tsan11-missingbug/test_all.sh` script tests two buggy data structure implem
 
 ### To reproduce assertion failures in Silo and Mabain:
 
-```
+```bash
     cd ~/c11tester-benchmarks/
     ./app_assertion_test.sh [number of runs]
 ```
