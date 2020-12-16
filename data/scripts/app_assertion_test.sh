@@ -6,7 +6,7 @@ C11TESTER_RELAXED_LIB="/home/vagrant/c11tester-relaxed"
 MABAINLIB="../src"
 MABAINDIR="mabain/examples"
 
-TESTS="silo"
+TESTS="silo mabain"
 
 TOTAL_RUN=$1
 
@@ -18,7 +18,6 @@ function run_silo_test {
 	export C11TESTER='-x1'
 	export LD_LIBRARY_PATH="${C11TESTER_RELAXED_LIB}"
 
-	echo "Silo assertion test"
 	COUNT_ASSERT=0
 	EXE='./dbtest --verbose -t 5'
 
@@ -36,14 +35,13 @@ function run_silo_test {
 	cd ../../..
 
 	AVG_ASSERT=$(echo "${COUNT_ASSERT} * 100 / ${TOTAL_RUN}" | bc -l | xargs printf "%.1f")
-	echo "Runs: ${TOTAL_RUN} | Assertion rate: ${AVG_ASSERT}%"
+	echo "Runs: ${TOTAL_RUN} | Assertions: ${COUNT_ASSERT} | Assertion rate: ${AVG_ASSERT}%"
 }
 
 function run_mabain_test {
 	export C11TESTER='-x1'
 	export LD_LIBRARY_PATH="${C11TESTERLIB}:${MABAINLIB}"
 
-	echo "Mabain assertion test"
 	COUNT_ASSERT=0
 	EXE='./mb_multi_thread_insert_test_assert'
 
@@ -63,17 +61,12 @@ function run_mabain_test {
 	cd ../..
 
 	AVG_ASSERT=$(echo "${COUNT_ASSERT} * 100 / ${TOTAL_RUN}" | bc -l | xargs printf "%.1f")
-	echo "Runs: ${TOTAL_RUN} | Assertion rate: ${AVG_ASSERT}%"
+	echo "Runs: ${TOTAL_RUN} | Assertions: ${COUNT_ASSERT} | Assertion rate: ${AVG_ASSERT}%"
 }
 
-#function run_all_tests {
-#	for t in ${TESTS}
-#	do
-#		echo "running ${t}"
-#		(run_${t}_test 2>&1) > "${t}.log"
-#		run_${t}_test &> "${t}.log"
-#	done
-#}
-
-#run_silo_test
-run_mabain_test
+echo "** Assertion test for some application benchmarks: ${TESTS} **"
+for t in ${TESTS}
+do
+	echo -n "${t} "
+	run_${t}_test
+done

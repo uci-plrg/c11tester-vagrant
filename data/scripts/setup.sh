@@ -28,11 +28,11 @@ git clone git://plrg.ics.uci.edu/c11concurrency-benchmarks.git c11tester-benchma
 cd c11tester-benchmarks
 git checkout vagrant
 cp /vagrant/data/scripts/build.sh .
-cp /vagrant/data/scripts/assertion_test.sh .
-cp /vagrant/data/scripts/test_all.sh .
+cp /vagrant/data/scripts/do_test_all.sh .
+cp /vagrant/data/scripts/app_assertion_test.sh .
+cp /vagrant/data/scripts/app_test_all.sh .
 cp /vagrant/data/scripts/run.sh .
 cp /vagrant/data/scripts/calculator.py .
-chmod +x build.sh
 ./build.sh
 cd ..
 

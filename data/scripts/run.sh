@@ -75,17 +75,12 @@ function run_jsbench_test {
 	cd ..
 }
 
-function run_all_tests {
-	for t in ${TESTS}
-	do
-		echo "running ${t}"
-		(run_${t}_test 2>&1) > "${t}.log"
-#		run_${t}_test &> "${t}.log"
-	done
-}
-
-# Remove previous output files
-rm *.log 2> /dev/null
 rm $REDUNDANT 2> /dev/null
 
-run_all_tests
+echo "Benchmarks: ${TESTS}"
+for t in ${TESTS}
+do
+	rm "${t}.log" 2> /dev/null
+	echo "Running ${t}"
+	(run_${t}_test 2>&1) > "${t}.log"
+done
