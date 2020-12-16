@@ -21,6 +21,7 @@ echo "Running each benchmark with multiple cores for ${TOTAL_RUN} times"
 mv *.log all-core
 echo "Done"
 python calculator.py all-core
+echo ""
 
 # Run in single-core configuration
 if [ ! -d "single-core" ]; then
