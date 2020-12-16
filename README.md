@@ -29,21 +29,26 @@
     c11tester-vagrant $ vagrant ssh
 ```
 
+Note that two versions of C11Tester are built inside of the Vagrant VM.  The `~/c11tester` contains the regular version of C11Tester that models volatiles as acquire and release atomics, while the `~/c11tester-relaxed` contains the relaxed version of C11Tester that models volatiles as relaxed atomics.  The regular version of C11Tester is used to run all tests, execpt for the Silo assertion test (see the "reproduce assertion failures" section below) where the relaxed version is used.
+
 ## Running C11Tester benchmarks
 
 Our benchmarks fall into three categories: application benchmarks, data structure benchmarks (CDSChecker data structure benchmarks) used to evaluate CDSChecker, and data structure benchmarks with injected bugs that both tsan11 and tsan11rec miss.
 
 In the benchmark directory (`~/c11tester-benchmarks`), the application benchmarks include Gdax (`gdax-orderbook-hpp`), Iris (`iris`), Mabain (`mabain`), Silo (`silo`), and the Javascript Engine of Firefox that runs Jsbench (`jsbench-2013.1`).  The `c11tester-benchmarks` repository does not contain the Javascript Engine of Firefox, but the setup scripts downloaded Firefox, compiled the Javascript Engine, and copy the Javascript Engine binary into the benchmark directory (`c11tester-benchmarks/js`) by running the script `build_firefox_jsshell.sh`.
 
-The `c11tester-benchmarks/cdschecker_modified_benchmarks` directory contains data structure benchmarks used to evaluate CDSChecker.  The `c11tester-benchmarks/tsan11-missingbug` directory contains data structure benchmarks with bugs that tsan11 and tsan11rec fail to detect. 
+The `c11tester-benchmarks/cdschecker_modified_benchmarks` directory contains data structure benchmarks used to evaluate CDSChecker.  The `c11tester-benchmarks/tsan11-missingbug` directory contains data structure benchmarks with injected bugs that tsan11 and tsan11rec fail to detect.
+
+After the setup, some scripts are copied into the `c11tester-benchmarks` directory, including a unified script `do_test_all.sh` that runs all tests.  We also provide instructions on how to run each individual test below.
 
 ### To run application benchmarks:
 
 ```
     cd ~/c11tester-benchmarks
-    ./test_all.sh [number of runs]
+    ./app_test_all.sh [number of runs]
 ```
-The `c11tester-benchmarks/test_all.sh` script runs all of five application benchmarks in both the all-core and single-core configurations.  The `test_all.sh` script also accepts an integer as an optional parameter that specifies how many times each application benchmark is run, such as `./test_all.sh 5`.  It runs all of five application benchmarks 10 times by default.  After finish running the application benchmarks, the `test_all.sh` script executes `python calculator.py all-core` or `python calculator.py single-core` in the `c11tester-benchmarks` directory to print out results. 
+
+The `c11tester-benchmarks/app_test_all.sh` script runs all of five application benchmarks in both the all-core and single-core configurations.  The `app_test_all.sh` script also accepts an integer as an optional parameter that specifies how many times each application benchmark is run, such as `./app_test_all.sh 5`.  It runs all of five application benchmarks 10 times by default.  After finish running the application benchmarks, the `app_test_all.sh` script executes `python calculator.py all-core` or `python calculator.py single-core` in the `c11tester-benchmarks` directory to print out results.
 
 ### To run CDSChecker data structure benchmarks:
 
@@ -63,7 +68,18 @@ The `cdschecker_modified_benchmarks/test_all.sh` script tests seven data structu
 
 The `tsan11-missingbug/test_all.sh` script tests two buggy data structure implementations for 1000 runs and reports assertion detection rates and execution time for each data structure.  The results are printed in the console.
 
+### To reproduce assertion failures in Silo and Mabain:
+
+```
+    cd ~/c11tester-benchmarks/
+    ./app_assertion_test.sh [number of runs]
+```
+
+The `app_assertion_test.sh` script also accepts an optional integer parameter that specifies how many times Silo and Mabian are tested.  Both benchmarks are tested 10 time for assertion failures by default.  The assertion detection rates are reported and printed in the console.
+
+
 ### Compile and run your own test cases inside of the VM
+
 You need to compile your tool with C11Tester and our LLVM pass (i.e., CDSPass). To make this process easier, we provide four scripting files g++, gcc, clang, and clang++ under the 'c11tester-benchmarks' folder.  In each of these files we define appropriate flags for the compiler.  You can modify '/home/vagrant/llvm/build/bin/clang', '/home/vagrant/llvm/build/lib/libCDSPass.so', and '/home/vagrant/c11tester' in these files to point to the location of clang (clang++), LLVM and C11Tester on your machine.  Then, modify the building system of your tool to use these script wrappers instead of the actual compilers. For example, your '~/c11tester-benchmarks/g++' file can look like this:
 
 ```
@@ -77,4 +93,4 @@ We make no warranties that C11Tester is free of errors. Please read the paper an
 
 ## Contact
 
-Please feel free to contact us for more information. Bug reports are welcome, and we are happy to hear from our users. Contact Weiyu Luo at [weiyul7@uci.edu](mailto:weiyul7@uci.edu) or Brian Demsky at [bdemsky@uci.edu](mailto:bdemsky@uci.edu) for any questions about C11Tester. 
+Please feel free to contact us for more information. Bug reports are welcome, and we are happy to hear from our users. Contact Weiyu Luo at [weiyul7@uci.edu](mailto:weiyul7@uci.edu) or Brian Demsky at [bdemsky@uci.edu](mailto:bdemsky@uci.edu) for any questions about C11Tester.
